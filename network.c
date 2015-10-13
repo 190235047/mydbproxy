@@ -56,7 +56,7 @@ void recv_data(int fd, int events, void *arg, int poll_fd)
 	int len;
     /* receive data */
 	len = recv(fd, ev->buff, sizeof(ev->buff), 0);
-	poll_event_del(poll_fd, ev);
+	//poll_event_del(poll_fd, ev);
 	if (len > 0) {
 		// ev->len		 += len;
 	    ev->buff[len] = '\0';
@@ -65,11 +65,10 @@ void recv_data(int fd, int events, void *arg, int poll_fd)
 		//poll_event_add(poll_fd, EPOLLOUT, send_data, fd);
 		poll_event_mod(poll_fd, EPOLLOUT, send_data, ev);
 	} else if(len == 0 ) {
-		close(ev->fd);
-		poll_event_del(poll_fd, ev);
+		close_data(poll_fd, ev);
 		printf("[fd=%d],closed grace fully.\n", fd);
 	} else {
-		close(ev->fd);
+		close_data(poll_fd, ev);
 		printf("recv[fd=%d]error[%d]:%s\n", fd, errno, strerror(errno));
 	}
 }
@@ -89,8 +88,14 @@ void send_data(int fd, int events, void *arg, int poll_fd)
 		//poll_event_del(poll_fd, ev);
 		poll_event_mod(poll_fd, EPOLLIN, recv_data, ev);
 	} else {
-		close(ev->fd);
-		poll_event_del(poll_fd, ev);
+		close_data(poll_fd, ev);
 		printf("send[fd=%d]error[%d]\n", fd, errno);
 	}
+}
+
+void close_data(int poll_fd, struct myevent_s *ev)
+{
+	close(ev->fd);
+	poll_event_del(poll_fd, ev);
+
 }

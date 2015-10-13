@@ -52,21 +52,8 @@ pid_t child_make(int listen_socket)
 	while (1) {
 		/* a simple time out check here,every time 100,better to use a mini-heap,and add time revent */
 		long now = time(NULL);
-		// for (i = 0; i <100; i++, checkPos++ )      /* doesn't check listen fd */
-		// {
-		// 	if (checkPos == MAX_EVENTS)
-		// 		checkPos = 0;                   /* recycle */
-		// 	if (g_Events[checkPos].status != 1 )
-		// 		continue;
-		// 	long duration = now - g_Events[checkPos].last_active;
-		// 	if ( duration >= 60 )                   /* 60s timeout */
-		// 	{
-		// 		close(g_Events[checkPos].fd );
-		// 		printf("[fd=%d]timeout[%d--%d].\n", g_Events[checkPos].fd, g_Events[checkPos].last_active, now);
-		// 		EventDel(g_epollFd, &g_Events[checkPos]);
-		// 	}
-		// }
-	    /* wait for events to happen */
+		
+		//后期改进支持长链接,主要思路用hashtable，每个accept进入链表，链表是双向链表，并在myevent_s中记录这个（方便删除），每次while循环从链表头部循环超过某个时间就干掉
 
 	    printf("epoll_wait\n");
 		int fds = epoll_wait(poll_fd, events, MAX_EVENTS, 1000);
