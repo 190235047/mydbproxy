@@ -14,4 +14,5 @@ struct myevent_s
 int  poll_create(int max_events);
 void poll_event_set(struct myevent_s *ev, int fd, void (*call_back)(int, int, void*, int));
 void poll_event_add(int epoll_fd, int events, void (*call_back)(int, int, void*, int), int fd);
+void poll_event_mod(int epoll_fd, int events, void (*call_back)(int, int, void*, int), struct myevent_s *ev);
 void poll_event_del(int epollFd, struct myevent_s *ev);

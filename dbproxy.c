@@ -67,18 +67,20 @@ pid_t child_make(int listen_socket)
 		// 	}
 		// }
 	    /* wait for events to happen */
+
+	    printf("epoll_wait\n");
 		int fds = epoll_wait(poll_fd, events, MAX_EVENTS, 1000);
 		if (fds < 0) {
 			printf("epoll_wait error,exit\n" );
 			break;
 		}
-		//printf("fds : %d\n", fds);
+		printf("fds : %d\n", fds);
 		for (i = 0; i < fds; i++) {
 			struct myevent_s *ev = (struct myevent_s *) events[i].data.ptr;
-			if ( (events[i].events & EPOLLIN) && (ev->events & EPOLLIN)) {   /* readevent */
+			if ( (events[i].events & EPOLLIN) && (ev->events & EPOLLIN)) {   /* read event */
 				ev->call_back(ev->fd, events[i].events, ev->arg, poll_fd);
 			}
-			if ( (events[i].events & EPOLLOUT) && (ev->events & EPOLLOUT)) { /* writeevent */
+			if ( (events[i].events & EPOLLOUT) && (ev->events & EPOLLOUT)) { /* write event */
 				ev->call_back(ev->fd, events[i].events, ev->arg, poll_fd);
 			}
 		}
