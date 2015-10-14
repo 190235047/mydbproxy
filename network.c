@@ -1,5 +1,6 @@
 #include "network.h"
 #include "epoll.h"
+
 int init_listen_socket(short port)
 {
 	int listen_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -65,10 +66,10 @@ void recv_data(int fd, int events, void *arg, int poll_fd)
 		//poll_event_add(poll_fd, EPOLLOUT, send_data, fd);
 		poll_event_mod(poll_fd, EPOLLOUT, send_data, ev);
 	} else if(len == 0 ) {
-		close_data(poll_fd, ev);
+		close_data(poll_fd, arg);
 		printf("[fd=%d],closed grace fully.\n", fd);
 	} else {
-		close_data(poll_fd, ev);
+		close_data(poll_fd, arg);
 		printf("recv[fd=%d]error[%d]:%s\n", fd, errno, strerror(errno));
 	}
 }
@@ -84,18 +85,18 @@ void send_data(int fd, int events, void *arg, int poll_fd)
 	printf("send data:%s\n",ev->buff);
 	if (len > 0) {
 		printf("send[fd=%d],[%d<->%d]%s\n", fd, len, ev->len, ev->buff);
-		/* change to receive event */
-		//poll_event_del(poll_fd, ev);
-		poll_event_mod(poll_fd, EPOLLIN, recv_data, ev);
+		close_data(poll_fd, arg);
+		//poll_event_mod(poll_fd, EPOLLIN, recv_data, ev);
 	} else {
-		close_data(poll_fd, ev);
+		close_data(poll_fd, arg);
 		printf("send[fd=%d]error[%d]\n", fd, errno);
 	}
 }
-
-void close_data(int poll_fd, struct myevent_s *ev)
+void close_data(int poll_fd, void *arg)
 {
+	struct myevent_s *ev = (struct myevent_s *) arg;
 	close(ev->fd);
 	poll_event_del(poll_fd, ev);
-
 }
+
+

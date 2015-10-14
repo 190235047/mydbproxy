@@ -55,13 +55,13 @@ pid_t child_make(int listen_socket)
 		
 		//后期改进支持长链接,主要思路用hashtable，每个accept进入链表，链表是双向链表，并在myevent_s中记录这个（方便删除），每次while循环从链表头部循环超过某个时间就干掉
 
-	    printf("epoll_wait\n");
+	    //printf("epoll_wait\n");
 		int fds = epoll_wait(poll_fd, events, MAX_EVENTS, 1000);
 		if (fds < 0) {
 			printf("epoll_wait error,exit\n" );
 			break;
 		}
-		printf("fds : %d\n", fds);
+		//printf("fds : %d\n", fds);
 		for (i = 0; i < fds; i++) {
 			struct myevent_s *ev = (struct myevent_s *) events[i].data.ptr;
 			if ( (events[i].events & EPOLLIN) && (ev->events & EPOLLIN)) {   /* read event */
