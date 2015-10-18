@@ -15,4 +15,5 @@ if(mysql_errno(&my_connection)) {
 	printf("Connection error %d: %s\n", mysql_errno(&my_connection), mysql_errno(&my_connection));
 } 
  }
+while(1) {}
 }

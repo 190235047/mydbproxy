@@ -85,8 +85,8 @@ void send_data(int fd, int events, void *arg, int poll_fd)
 	printf("send data:%s\n",ev->buff);
 	if (len > 0) {
 		printf("send[fd=%d],[%d<->%d]%s\n", fd, len, ev->len, ev->buff);
-		close_data(poll_fd, arg);
-		//poll_event_mod(poll_fd, EPOLLIN, recv_data, ev);
+		//close_data(poll_fd, arg);
+		poll_event_mod(poll_fd, EPOLLIN, recv_data, ev);
 	} else {
 		close_data(poll_fd, arg);
 		printf("send[fd=%d]error[%d]\n", fd, errno);
